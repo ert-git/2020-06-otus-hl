@@ -81,17 +81,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .accessDeniedPage("/403.html")
                 .and()
-                .addFilterBefore(filter, CsrfFilter.class); // <- this was added;
+                .addFilterBefore(filter, CsrfFilter.class); 
 
     }
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService());
-        // .inMemoryAuthentication()
-        // .withUser("jim").password("{noop}demo").roles("ADMIN").and()
-        // .withUser("bob").password("{noop}demo").roles("USER").and()
-        // .withUser("ted").password("{noop}demo").roles("USER", "ADMIN");
     }
 
 }

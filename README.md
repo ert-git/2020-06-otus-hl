@@ -1,10 +1,5 @@
 # 2020-06-otus-hl
 
-# Домашнее задание размещено на 
-```
-http://rd.iskrauraltel.ru:33388/otus/login.html
-```
-
 По кнопке Register можно зарегистрироваться. После этого происходит перенаправление на страницу логина, где надо ввести логин и пароль. Для шифрования паролей используется org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.
 
 
