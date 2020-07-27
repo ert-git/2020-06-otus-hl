@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>User page</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="bootstrap.css" th:href="@{/bootstrap.css}" />
+</head>
+<body>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+            <a class="btn btn-primary" th:href="@{/user.html}">Back to user page</a>
+
+      </div>
+      <div class="col-sm">
+        <h1>User data</h1>
+
+        <div>
+          <div class="form-group">
+            Login: <span th:utext="${user.login}"></span>
+          </div>
+
+          <div class="form-group">
+            First name:   <span th:utext="${user.firstName}"></span>
+          </div>
+          <div class="form-group">
+            Second name:  <span th:utext="${user.secondName}"></span>
+          </div>
+          <div class="form-group">
+            Last name:  <span th:utext="${user.lastName}"></span>
+          </div>
+          <div class="form-group">
+            City:  <span th:utext="${user.city?.name}"></span>
+          </div>
+          <div class="form-group">
+            Age: <span th:utext="${user.age}"></span>
+          </div>
+          <div class="form-group">
+            Gender: <span th:utext="${user.gender.name()}"></span>
+          </div>
+          <div class="form-group">
+            Interests: <span th:utext="${user.interests}"></span>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm">
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
