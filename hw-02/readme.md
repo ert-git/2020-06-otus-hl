@@ -1,8 +1,6 @@
 
 # Без индексов 
 
-Тест на 1000 запросов сделать не получилось: не хватает ресурсов. Но здесь и так можно предположить результат: без индексов все окончательно умрет (уже на сотне почти не шевелится). С индексами работать будет, но медленно. Кроме того, 1000 одновременных коннектов к БД - это не вариант для prodaction. Для обслуживания такого кол-ва запросов необходимо вводить пул соединений к БД на стороне клиента. Если пул будет ограничен, например, 100 соединениями, то время ожидания для клиента при 1000 запросов увеличится в 10 раз по отношению к среденему времени отклика при 100 соединениях.
-
 ## План выполнения 
 
 ```json
@@ -70,64 +68,87 @@ Empty set (8.79 sec)
 ### 1 соединение
 
 ```
-u1@u-1:~/otus$ /usr/local/bin/wrk/wrk -t1 -c1 -d300s --timeout 100s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html |  wrk2img ./reports/output.png
+u1@u-1:~$ /usr/local/bin/wrk/wrk -t1 -c1 -d300s --timeout 200s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html
 Running 5m test @ http://192.168.11.165:8080/otus/search-users.html
   1 threads and 1 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency   806.17ms   26.68ms   1.20s    97.58%
-    Req/Sec     0.99      0.07     1.00     99.46%
+    Latency   779.19ms    8.48ms 845.89ms   74.55%
+    Req/Sec     1.00      0.00     1.00    100.00%
   Latency Distribution
-     50%  802.40ms
-     75%  809.69ms
-     90%  817.36ms
-     99%  953.87ms
-  372 requests in 5.00m, 505.74KB read
-Requests/sec:      1.24
-Transfer/sec:      1.69KB
+     50%  777.79ms
+     75%  783.54ms
+     90%  790.19ms
+     99%  806.62ms
+  385 requests in 5.00m, 523.42KB read
+Requests/sec:      1.28
+Transfer/sec:      1.74KB
+
 ```
 
 ### 10 соединений
 
 ```
-u1@u-1:~/otus$ /usr/local/bin/wrk/wrk -t10 -c10 -d300s --timeout 100s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html |  wrk2img ./reports/output.png
+u1@u-1:~$ /usr/local/bin/wrk/wrk -t10 -c10 -d300s --timeout 200s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html
 Running 5m test @ http://192.168.11.165:8080/otus/search-users.html
   10 threads and 10 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     6.78s    69.28ms   7.17s    84.77%
+    Latency     3.46s    74.38ms   3.96s    78.26%
     Req/Sec     0.00      0.00     0.00    100.00%
   Latency Distribution
-     50%    6.76s
-     75%    6.79s
-     90%    6.84s
-     99%    7.08s
-  440 requests in 5.00m, 598.12KB read
-Requests/sec:      1.47
-Transfer/sec:      1.99KB
+     50%    3.45s
+     75%    3.49s
+     90%    3.54s
+     99%    3.72s
+  860 requests in 5.00m, 1.14MB read
+Requests/sec:      2.87
+Transfer/sec:      3.90KB
 ```
 
 ### 100 соединений
 
 ```
-u1@u-1:~/otus$ /usr/local/bin/wrk/wrk -t100 -c100 -d300s --timeout 100s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html |  wrk2img ./reports/output.png
+u1@u-1:~$ /usr/local/bin/wrk/wrk -t100 -c100 -d300s --timeout 200s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html
 Running 5m test @ http://192.168.11.165:8080/otus/search-users.html
   100 threads and 100 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     1.13m   540.17ms   1.19m    78.25%
+    Latency     1.08m    49.41s    2.87m    80.00%
     Req/Sec     0.00      0.00     0.00    100.00%
   Latency Distribution
-     50%    1.12m
-     75%    1.13m
-     90%    1.14m
-     99%    1.16m
-  400 requests in 5.00m, 543.75KB read
-Requests/sec:      1.33
-Transfer/sec:      1.81KB
+     50%   34.47s
+     75%    1.61m
+     90%    2.85m
+     99%    2.87m
+  450 requests in 5.00m, 611.72KB read
+Requests/sec:      1.50
+Transfer/sec:      2.04KB
+
 ```
+
+### 1000 соединений
+
+```
+u1@u-1:~$ /usr/local/bin/wrk/wrk -t100 -c1000 -d300s --timeout 200s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html
+Running 5m test @ http://192.168.11.165:8080/otus/search-users.html
+  100 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.70m    41.72s    2.57m    33.04%
+    Req/Sec     7.86      8.10    50.00     86.09%
+  Latency Distribution
+     50%    1.70m
+     75%    2.55m
+     90%    2.55m
+     99%    2.57m
+  750 requests in 5.00m, 1.00MB read
+  Socket errors: connect 0, read 0, write 193, timeout 299
+Requests/sec:      2.50
+Transfer/sec:      3.40KB
+```
+
 
 ## Графики
 
-[График latency от числа соединений] (https://yadi.sk/i/7iZP6JrhEBeWNw)  
-[График request/сек от числа соединений] (https://yadi.sk/i/4w0X39LK6iw1uQ)  
+[График latency от числа соединений] (https://yadi.sk/i/WPdQXMAGoVvgkQ)
+[График request/сек от числа соединений] (https://yadi.sk/i/PYK2GJVMdF7cNA)
 
 
 # С индексами
@@ -210,63 +231,87 @@ Empty set (0.01 sec)
 ### 1 соединение
 
 ```
-u1@u-1:~/otus$ /usr/local/bin/wrk/wrk -t1 -c1 -d300s --timeout 100s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html |  wrk2img ./reports/output-1-after.png
+u1@u-1:~$ /usr/local/bin/wrk/wrk -t1 -c1 -d300s --timeout 200s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html
 Running 5m test @ http://192.168.11.165:8080/otus/search-users.html
   1 threads and 1 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     5.50ms    7.02ms 168.05ms   97.64%
-    Req/Sec   210.06     30.00   250.00     87.43%
+    Latency     7.47ms    7.41ms 143.17ms   95.74%
+    Req/Sec   154.05     40.58   232.00     70.16%
   Latency Distribution
-     50%    4.50ms
-     75%    4.87ms
-     90%    5.41ms
-     99%   33.65ms
-  62650 requests in 5.00m, 83.18MB read
-Requests/sec:    208.80
-Transfer/sec:    283.88KB
+     50%    5.85ms
+     75%    7.99ms
+     90%    8.10ms
+     99%   43.67ms
+  45786 requests in 5.00m, 60.79MB read
+Requests/sec:    152.60
+Transfer/sec:    207.47KB
 ```
 
 ### 10 соединений
 ```
-u1@u-1:~/otus$ /usr/local/bin/wrk/wrk -t10 -c10 -d300s --timeout 100s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html |  wrk2img ./reports/output-10-after.png
+u1@u-1:~$ /usr/local/bin/wrk/wrk -t10 -c10 -d300s --timeout 200s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html
 Running 5m test @ http://192.168.11.165:8080/otus/search-users.html
   10 threads and 10 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    36.48ms   26.52ms 694.02ms   94.69%
-    Req/Sec    29.47      7.66   101.00     57.29%
+    Latency    22.62ms   16.19ms 265.18ms   93.84%
+    Req/Sec    47.73     11.98    90.00     61.13%
   Latency Distribution
-     50%   31.90ms
-     75%   38.07ms
-     90%   48.92ms
-     99%  132.15ms
-  87538 requests in 5.00m, 116.22MB read
-Requests/sec:    291.70
-Transfer/sec:    396.58KB
+     50%   19.41ms
+     75%   25.40ms
+     90%   33.27ms
+     99%   90.91ms
+  142306 requests in 5.00m, 188.94MB read
+Requests/sec:    474.21
+Transfer/sec:    644.71KB
+
 ```
 
 ### 100 соединений
 
 ```
-u1@u-1:~/otus$ /usr/local/bin/wrk/wrk -t10 -c100 -d300s --timeout 100s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html |  wrk2img ./reports/output-100-after.png
+u1@u-1:~$ /usr/local/bin/wrk/wrk -t100 -c100 -d300s --timeout 200s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html
 Running 5m test @ http://192.168.11.165:8080/otus/search-users.html
-  10 threads and 100 connections
+  100 threads and 100 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency   363.35ms  205.83ms   5.57s    95.33%
-    Req/Sec    29.57     15.46   101.00     65.13%
+    Latency   218.91ms  175.81ms   3.36s    90.62%
+    Req/Sec     6.03      3.54    70.00     61.46%
   Latency Distribution
-     50%  342.96ms
-     75%  393.52ms
-     90%  460.17ms
-     99%    1.06s
-  85878 requests in 5.00m, 114.02MB read
-Requests/sec:    286.19
-Transfer/sec:    389.09KB
+     50%  195.38ms
+     75%  265.17ms
+     90%  351.09ms
+     99%  692.46ms
+  146275 requests in 5.00m, 194.21MB read
+Requests/sec:    487.43
+Transfer/sec:    662.69KB
+
 ```
+
+### 1000 соединений
+
+```
+u1@u-1:~$ /usr/local/bin/wrk/wrk -t1000 -c1000 -d300s --timeout 200s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html
+Running 5m test @ http://192.168.11.165:8080/otus/search-users.html
+  1000 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     2.19s   757.71ms  11.57s    90.45%
+    Req/Sec     0.10      0.63    10.00     96.27%
+  Latency Distribution
+     50%    2.09s
+     75%    2.35s
+     90%    2.69s
+     99%    5.23s
+  136776 requests in 5.00m, 181.59MB read
+  Socket errors: connect 0, read 0, write 161, timeout 0
+Requests/sec:    455.70
+Transfer/sec:    619.53KB
+
+```
+
 
 ## Графики
 
-[График latency от числа соединений] (https://yadi.sk/i/FQL0QAGFyaACUA)  
-[График request/сек от числа соединений] (https://yadi.sk/i/96qIt6u_i-P5ow)  
+[График latency от числа соединений] (https://yadi.sk/i/mItAKqdF97Hlrw)
+[График request/сек от числа соединений] (https://yadi.sk/i/EWlMY1rwrj-NFQ)
 
 # Выводы
 
