@@ -225,6 +225,7 @@ Transfer/sec:    283.88KB
 ```
 
 ### 10 соединений
+```
 u1@u-1:~/otus$ /usr/local/bin/wrk/wrk -t10 -c10 -d300s --timeout 100s --latency -s /home/u1/otus/post.lua http://192.168.11.165:8080/otus/search-users.html |  wrk2img ./reports/output-10-after.png
 Running 5m test @ http://192.168.11.165:8080/otus/search-users.html
   10 threads and 10 connections
