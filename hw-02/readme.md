@@ -124,8 +124,8 @@ Transfer/sec:      1.81KB
 
 ## Графики
 
-[График latency от числа соединений] (https://yadi.sk/i/7iZP6JrhEBeWNw)
-[График request/сек от числа соединений] (https://yadi.sk/i/4w0X39LK6iw1uQ)
+[График latency от числа соединений] (https://yadi.sk/i/7iZP6JrhEBeWNw)  
+[График request/сек от числа соединений] (https://yadi.sk/i/4w0X39LK6iw1uQ)  
 
 
 # С индексами
@@ -263,8 +263,8 @@ Transfer/sec:    389.09KB
 
 ## Графики
 
-[График latency от числа соединений] (https://yadi.sk/i/FQL0QAGFyaACUA)
-[График request/сек от числа соединений] (https://yadi.sk/i/96qIt6u_i-P5ow)
+[График latency от числа соединений] (https://yadi.sk/i/FQL0QAGFyaACUA)  
+[График request/сек от числа соединений] (https://yadi.sk/i/96qIt6u_i-P5ow)  
 
 # Выводы
 
